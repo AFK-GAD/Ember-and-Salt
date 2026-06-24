@@ -15,7 +15,7 @@
       --border:rgba(26,22,16,0.1);--border-light:rgba(26,22,16,0.06);
       --serif:'Cormorant',Georgia,serif;--sans:'Jost',sans-serif;
     }
-    html{scroll-behavior:smooth;}
+    html,body{scroll-behavior:smooth;margin:0;padding:0;}
     body{background:var(--cream);color:var(--text);font-family:var(--sans);font-weight:300;overflow-x:hidden;}
     nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:2rem 5rem;transition:all 0.5s;}
     nav.scrolled{background:rgba(250,247,242,0.97);padding:1.2rem 5rem;border-bottom:1px solid var(--border-light);backdrop-filter:blur(20px);}
@@ -28,24 +28,24 @@
     nav.scrolled .nav-links a:hover{color:var(--text);}
     .nav-reserve{font-size:0.62rem;font-weight:400;letter-spacing:0.28em;text-transform:uppercase;color:rgba(255,255,255,0.7);text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.3);padding-bottom:0.2rem;transition:all 0.3s;}
     nav.scrolled .nav-reserve{color:var(--ember);border-color:rgba(184,92,42,0.4);}
-    #home{height:100vh;display:grid;grid-template-columns:55% 45%;overflow:hidden;}
-    .hero-img-side{position:relative;overflow:hidden;}
+    #home{height:100vh;min-height:600px;display:grid;grid-template-columns:55% 45%;overflow:hidden;margin:0;padding:0;}
+    .hero-img-side{position:relative;overflow:hidden;height:100%;min-height:100vh;}
     .hero-img-side img{width:100%;height:100%;object-fit:cover;object-position:center;}
     .hero-img-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(26,22,16,0.25),rgba(26,22,16,0.05));}
-    .hero-text-side{background:var(--charcoal);display:flex;flex-direction:column;justify-content:center;padding:8rem 4rem 6rem 5rem;position:relative;overflow:hidden;}
+    .hero-text-side{background:var(--charcoal);display:flex;flex-direction:column;justify-content:space-between;padding:7rem 4rem 2rem 5rem;position:relative;overflow:hidden;height:100%;min-height:100vh;}
     .hero-text-side::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(184,92,42,0.08),transparent 70%);}
     .hero-issue{font-size:0.58rem;font-weight:400;letter-spacing:0.5em;text-transform:uppercase;color:rgba(245,240,232,0.3);margin-bottom:4rem;}
     .hero-title{font-family:var(--serif);font-size:clamp(3.5rem,6vw,6.5rem);font-weight:300;font-style:italic;line-height:0.95;color:var(--parchment);margin-bottom:2rem;}
     .hero-title strong{font-style:normal;font-weight:600;display:block;}
     .hero-rule{width:30px;height:1px;background:var(--ember);margin:2rem 0;}
     .hero-sub{font-size:0.85rem;font-weight:300;color:rgba(245,240,232,0.5);line-height:1.9;max-width:320px;margin-bottom:4rem;}
-    .hero-actions{display:flex;flex-direction:column;gap:1.2rem;align-items:flex-start;}
+    .hero-actions{display:flex;flex-direction:column;gap:1.2rem;align-items:flex-start;margin-bottom:2rem;}
     .btn-ember{font-size:0.65rem;font-weight:500;letter-spacing:0.25em;text-transform:uppercase;color:var(--charcoal);background:var(--ember);padding:1rem 2.8rem;text-decoration:none;transition:background 0.3s;display:inline-block;}
     .btn-ember:hover{background:var(--ember2);}
     .btn-text-light{font-size:0.65rem;font-weight:300;letter-spacing:0.28em;text-transform:uppercase;color:rgba(245,240,232,0.35);text-decoration:none;display:inline-flex;align-items:center;gap:0.6rem;transition:color 0.3s;}
     .btn-text-light:hover{color:rgba(245,240,232,0.7);}
     .btn-text-light::after{content:'→';}
-    .hero-bottom{position:absolute;bottom:3rem;left:5rem;right:4rem;display:flex;justify-content:space-between;padding-top:1.5rem;border-top:1px solid rgba(245,240,232,0.08);}
+    .hero-bottom{display:flex;justify-content:space-between;padding-top:1.5rem;border-top:1px solid rgba(245,240,232,0.08);margin-top:auto;}
     .hb-num{font-family:var(--serif);font-size:1.8rem;font-style:italic;color:var(--ember-light);line-height:1;}
     .hb-label{font-size:0.55rem;letter-spacing:0.22em;text-transform:uppercase;color:rgba(245,240,232,0.2);margin-top:0.3rem;}
     section{padding:10rem 5rem;}
@@ -159,14 +159,14 @@
     <div class="hero-img-overlay"></div>
   </div>
   <div class="hero-text-side">
-    <div class="hero-issue">St. John's, Antigua · Est. 2019</div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;"><div class="hero-issue">St. John's, Antigua · Est. 2019</div>
     <h1 class="hero-title"><strong>Ember</strong>& Salt</h1>
     <div class="hero-rule"></div>
     <p class="hero-sub">A modern Caribbean grill where fire-kissed seafood meets the unhurried rhythm of island life. Dine with the horizon as your backdrop.</p>
     <div class="hero-actions">
       <a href="#reserve" class="btn-ember">Reserve a Table</a>
       <a href="#menu" class="btn-text-light">Explore the Menu</a>
-    </div>
+    </div></div>
     <div class="hero-bottom">
       <div><div class="hb-num">6+</div><div class="hb-label">Years Open</div></div>
       <div><div class="hb-num">40+</div><div class="hb-label">Menu Items</div></div>
