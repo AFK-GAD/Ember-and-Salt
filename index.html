@@ -1,366 +1,284 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ember & Salt — Caribbean Grill</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet"/>
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --charcoal: #1a1714; --charcoal2: #242018;
-      --amber: #c87941; --amber-light: #e09660;
-      --cream: #f5efe6; --cream2: #ede4d6; --muted: #8a7f74;
-      --serif: 'Cormorant Garamond', Georgia, serif;
-      --sans: 'Outfit', sans-serif;
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    :root{
+      --parchment:#f5f0e8;--parchment2:#ede5d8;
+      --charcoal:#1a1610;--charcoal2:#252018;
+      --ember:#b85c2a;--ember2:#d07040;--ember-light:#e89060;
+      --cream:#faf7f2;--text:#1a1610;--muted:#7a6e5e;--subtle:#c0b4a0;
+      --border:rgba(26,22,16,0.1);--border-light:rgba(26,22,16,0.06);
+      --serif:'Cormorant',Georgia,serif;--sans:'Jost',sans-serif;
     }
-    html { scroll-behavior: smooth; }
-    body { background: var(--charcoal); color: var(--cream); font-family: var(--sans); font-weight: 300; overflow-x: hidden; }
-
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.4rem 4rem; background: linear-gradient(to bottom, rgba(26,23,20,0.95), transparent); transition: background 0.4s; }
-    nav.scrolled { background: rgba(26,23,20,0.97); }
-    .nav-logo { font-family: var(--serif); font-size: 1.5rem; font-weight: 300; letter-spacing: 0.08em; color: var(--cream); text-decoration: none; }
-    .nav-logo span { color: var(--amber); font-style: italic; }
-    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
-    .nav-links a { font-size: 0.78rem; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cream2); text-decoration: none; transition: color 0.3s; }
-    .nav-links a:hover { color: var(--amber); }
-    .nav-cta { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--charcoal); background: var(--amber); padding: 0.65rem 1.4rem; text-decoration: none; transition: background 0.3s; }
-    .nav-cta:hover { background: var(--amber-light); }
-
-    #home { position: relative; height: 100vh; min-height: 640px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; overflow: hidden; }
-    .hero-bg { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(26,23,20,0.55) 0%, rgba(26,23,20,0.3) 40%, rgba(26,23,20,0.7) 100%), url('https://images.unsplash.com/photo-1544025162-d76694265947?w=1800&auto=format&fit=crop') center/cover no-repeat; }
-    .hero-content { position: relative; z-index: 2; max-width: 760px; padding: 0 2rem; animation: fadeUp 1.2s ease both; }
-    .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--amber); margin-bottom: 1.4rem; }
-    .hero-title { font-family: var(--serif); font-size: clamp(3.2rem, 8vw, 6rem); font-weight: 300; line-height: 1.05; color: var(--cream); margin-bottom: 1.2rem; }
-    .hero-title em { font-style: italic; color: var(--amber-light); }
-    .hero-sub { font-size: 1rem; font-weight: 300; color: var(--cream2); opacity: 0.85; max-width: 440px; margin: 0 auto 2.4rem; line-height: 1.7; }
-    .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-    .btn-primary { font-size: 0.76rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--charcoal); background: var(--amber); padding: 0.9rem 2.2rem; text-decoration: none; transition: background 0.3s; }
-    .btn-primary:hover { background: var(--amber-light); }
-    .btn-outline { font-size: 0.76rem; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cream); border: 1px solid rgba(245,239,230,0.45); padding: 0.9rem 2.2rem; text-decoration: none; transition: border-color 0.3s, color 0.3s; }
-    .btn-outline:hover { border-color: var(--amber); color: var(--amber); }
-    .hero-scroll { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.5rem; font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); animation: bounce 2s infinite; }
-    .hero-scroll::before { content: ''; width: 1px; height: 40px; background: var(--amber); opacity: 0.6; }
-
-    .features { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid rgba(200,121,65,0.2); }
-    .feature { padding: 3.5rem 3rem; border-right: 1px solid rgba(200,121,65,0.15); text-align: center; }
-    .feature:last-child { border-right: none; }
-    .feature-icon { font-size: 1.8rem; margin-bottom: 1rem; }
-    .feature-title { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; color: var(--amber-light); margin-bottom: 0.6rem; }
-    .feature-text { font-size: 0.85rem; color: var(--muted); line-height: 1.75; }
-
-    section { padding: 7rem 4rem; }
-    .section-label { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--amber); margin-bottom: 1rem; }
-    .section-title { font-family: var(--serif); font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 300; line-height: 1.1; color: var(--cream); margin-bottom: 1.5rem; }
-    .section-title em { font-style: italic; color: var(--amber-light); }
-    .section-body { font-size: 0.95rem; color: var(--muted); line-height: 1.85; max-width: 520px; }
-    .divider { width: 60px; height: 1px; background: var(--amber); opacity: 0.5; margin: 2rem 0; }
-
-    #about { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; background: var(--charcoal2); }
-    .about-img { position: relative; height: 540px; }
-    .about-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .about-img::after { content: ''; position: absolute; bottom: -20px; right: -20px; width: 60%; height: 60%; border: 1px solid rgba(200,121,65,0.3); z-index: -1; }
-    .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem; }
-    .stat-num { font-family: var(--serif); font-size: 2.8rem; font-weight: 300; color: var(--amber); }
-    .stat-label { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
-
-    #menu { background: var(--charcoal); }
-    .menu-header { text-align: center; margin-bottom: 4rem; }
-    .menu-header .section-body { margin: 0 auto; }
-    .menu-tabs { display: flex; justify-content: center; margin-bottom: 3.5rem; border: 1px solid rgba(200,121,65,0.25); width: fit-content; margin-left: auto; margin-right: auto; }
-    .tab-btn { font-size: 0.72rem; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); background: none; border: none; padding: 0.8rem 1.8rem; cursor: pointer; transition: all 0.3s; border-right: 1px solid rgba(200,121,65,0.25); }
-    .tab-btn:last-child { border-right: none; }
-    .tab-btn.active, .tab-btn:hover { color: var(--charcoal); background: var(--amber); }
-    .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); border: 1px solid rgba(200,121,65,0.15); }
-    .menu-item { padding: 2rem 2.5rem; border-bottom: 1px solid rgba(200,121,65,0.1); border-right: 1px solid rgba(200,121,65,0.1); display: flex; justify-content: space-between; align-items: flex-start; gap: 1.5rem; transition: background 0.3s; }
-    .menu-item:hover { background: rgba(200,121,65,0.05); }
-    .menu-item:nth-child(even) { border-right: none; }
-    .menu-item-name { font-family: var(--serif); font-size: 1.15rem; font-weight: 400; color: var(--cream); margin-bottom: 0.35rem; }
-    .menu-item-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
-    .menu-item-price { font-family: var(--serif); font-size: 1.1rem; color: var(--amber); white-space: nowrap; }
-    .menu-panel { display: none; }
-    .menu-panel.active { display: block; }
-
-    #gallery { background: var(--charcoal2); }
-    .gallery-header { margin-bottom: 3rem; }
-    .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 280px 280px; gap: 12px; }
-    .gallery-item { overflow: hidden; position: relative; }
-    .gallery-item:first-child { grid-row: span 2; }
-    .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s ease; }
-    .gallery-item:hover img { transform: scale(1.05); }
-    .gallery-overlay { position: absolute; inset: 0; background: rgba(200,121,65,0.15); opacity: 0; transition: opacity 0.4s; }
-    .gallery-item:hover .gallery-overlay { opacity: 1; }
-
-    #testimonials { background: var(--charcoal); text-align: center; }
-    .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 3.5rem; }
-    .testimonial { padding: 2.5rem; border: 1px solid rgba(200,121,65,0.18); text-align: left; position: relative; }
-    .testimonial::before { content: '"'; font-family: var(--serif); font-size: 5rem; line-height: 1; color: var(--amber); opacity: 0.25; position: absolute; top: 1rem; left: 1.5rem; }
-    .testimonial-text { font-family: var(--serif); font-size: 1.05rem; font-style: italic; color: var(--cream2); line-height: 1.75; margin-bottom: 1.5rem; padding-top: 1.5rem; }
-    .testimonial-author { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--amber); }
-    .stars { color: var(--amber); margin-bottom: 0.5rem; font-size: 0.85rem; }
-
-    #contact { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; background: var(--charcoal2); }
-    .contact-details { margin-top: 2.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
-    .contact-detail-label { font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.3rem; }
-    .contact-detail-val { font-size: 0.92rem; color: var(--cream2); line-height: 1.6; }
-    .contact-form { display: flex; flex-direction: column; gap: 1.2rem; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
-    .form-label { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
-    .form-input, .form-select, .form-textarea { background: rgba(245,239,230,0.05); border: 1px solid rgba(200,121,65,0.25); color: var(--cream); font-family: var(--sans); font-size: 0.9rem; font-weight: 300; padding: 0.85rem 1rem; outline: none; transition: border-color 0.3s; width: 100%; }
-    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--amber); }
-    .form-select option { background: var(--charcoal); }
-    .form-textarea { resize: vertical; min-height: 110px; }
-    .form-submit { font-family: var(--sans); font-size: 0.76rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--charcoal); background: var(--amber); border: none; padding: 1rem 2.5rem; cursor: pointer; transition: background 0.3s; align-self: flex-start; }
-    .form-submit:hover { background: var(--amber-light); }
-
-    footer { background: #111009; padding: 3rem 4rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(200,121,65,0.15); }
-    .footer-logo { font-family: var(--serif); font-size: 1.3rem; font-weight: 300; color: var(--cream); }
-    .footer-logo span { color: var(--amber); font-style: italic; }
-    .footer-center { font-size: 0.75rem; color: var(--muted); text-align: center; }
-    .footer-socials { display: flex; gap: 1.5rem; }
-    .footer-socials a { font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.3s; }
-    .footer-socials a:hover { color: var(--amber); }
-
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes bounce { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-8px); } }
-    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-
-    @media (max-width: 900px) {
-      nav { padding: 1.2rem 1.5rem; }
-      .nav-links { display: none; }
-      section { padding: 5rem 1.5rem; }
-      #about, #contact { grid-template-columns: 1fr; gap: 3rem; }
-      .features { grid-template-columns: 1fr; }
-      .feature { border-right: none; border-bottom: 1px solid rgba(200,121,65,0.15); }
-      .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
-      .gallery-item:first-child { grid-row: span 1; }
-      .menu-grid { grid-template-columns: 1fr; }
-      .menu-item:nth-child(even) { border-right: 1px solid rgba(200,121,65,0.1); }
-      .testimonials-grid { grid-template-columns: 1fr; }
-      .form-row { grid-template-columns: 1fr; }
-      footer { flex-direction: column; gap: 1.5rem; text-align: center; }
-      .about-img { height: 320px; }
+    html{scroll-behavior:smooth;}
+    body{background:var(--cream);color:var(--text);font-family:var(--sans);font-weight:300;overflow-x:hidden;}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:2rem 5rem;transition:all 0.5s;}
+    nav.scrolled{background:rgba(250,247,242,0.97);padding:1.2rem 5rem;border-bottom:1px solid var(--border-light);backdrop-filter:blur(20px);}
+    .nav-logo{font-family:var(--serif);font-size:1.3rem;font-weight:300;font-style:italic;color:var(--cream);text-decoration:none;letter-spacing:0.08em;transition:color 0.5s;}
+    nav.scrolled .nav-logo{color:var(--text);}
+    .nav-links{display:flex;gap:3rem;list-style:none;}
+    .nav-links a{font-size:0.65rem;font-weight:400;letter-spacing:0.28em;text-transform:uppercase;color:rgba(255,255,255,0.7);text-decoration:none;transition:color 0.3s;}
+    nav.scrolled .nav-links a{color:var(--muted);}
+    .nav-links a:hover{color:var(--cream);}
+    nav.scrolled .nav-links a:hover{color:var(--text);}
+    .nav-reserve{font-size:0.62rem;font-weight:400;letter-spacing:0.28em;text-transform:uppercase;color:rgba(255,255,255,0.7);text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.3);padding-bottom:0.2rem;transition:all 0.3s;}
+    nav.scrolled .nav-reserve{color:var(--ember);border-color:rgba(184,92,42,0.4);}
+    #home{height:100vh;display:grid;grid-template-columns:55% 45%;overflow:hidden;}
+    .hero-img-side{position:relative;overflow:hidden;}
+    .hero-img-side img{width:100%;height:100%;object-fit:cover;object-position:center;}
+    .hero-img-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(26,22,16,0.25),rgba(26,22,16,0.05));}
+    .hero-text-side{background:var(--charcoal);display:flex;flex-direction:column;justify-content:center;padding:8rem 4rem 6rem 5rem;position:relative;overflow:hidden;}
+    .hero-text-side::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(184,92,42,0.08),transparent 70%);}
+    .hero-issue{font-size:0.58rem;font-weight:400;letter-spacing:0.5em;text-transform:uppercase;color:rgba(245,240,232,0.3);margin-bottom:4rem;}
+    .hero-title{font-family:var(--serif);font-size:clamp(3.5rem,6vw,6.5rem);font-weight:300;font-style:italic;line-height:0.95;color:var(--parchment);margin-bottom:2rem;}
+    .hero-title strong{font-style:normal;font-weight:600;display:block;}
+    .hero-rule{width:30px;height:1px;background:var(--ember);margin:2rem 0;}
+    .hero-sub{font-size:0.85rem;font-weight:300;color:rgba(245,240,232,0.5);line-height:1.9;max-width:320px;margin-bottom:4rem;}
+    .hero-actions{display:flex;flex-direction:column;gap:1.2rem;align-items:flex-start;}
+    .btn-ember{font-size:0.65rem;font-weight:500;letter-spacing:0.25em;text-transform:uppercase;color:var(--charcoal);background:var(--ember);padding:1rem 2.8rem;text-decoration:none;transition:background 0.3s;display:inline-block;}
+    .btn-ember:hover{background:var(--ember2);}
+    .btn-text-light{font-size:0.65rem;font-weight:300;letter-spacing:0.28em;text-transform:uppercase;color:rgba(245,240,232,0.35);text-decoration:none;display:inline-flex;align-items:center;gap:0.6rem;transition:color 0.3s;}
+    .btn-text-light:hover{color:rgba(245,240,232,0.7);}
+    .btn-text-light::after{content:'→';}
+    .hero-bottom{position:absolute;bottom:3rem;left:5rem;right:4rem;display:flex;justify-content:space-between;padding-top:1.5rem;border-top:1px solid rgba(245,240,232,0.08);}
+    .hb-num{font-family:var(--serif);font-size:1.8rem;font-style:italic;color:var(--ember-light);line-height:1;}
+    .hb-label{font-size:0.55rem;letter-spacing:0.22em;text-transform:uppercase;color:rgba(245,240,232,0.2);margin-top:0.3rem;}
+    section{padding:10rem 5rem;}
+    .eyebrow{font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:var(--ember);margin-bottom:2rem;}
+    .sec-title{font-family:var(--serif);font-size:clamp(2.2rem,4vw,3.5rem);font-weight:300;font-style:italic;line-height:1.15;color:var(--text);}
+    .rule{width:30px;height:1px;background:var(--ember);margin:2rem 0;}
+    #philosophy{display:grid;grid-template-columns:1fr 2px 1fr;gap:6rem;align-items:start;}
+    .phil-divider{background:var(--border-light);}
+    .phil-body{font-size:0.88rem;color:var(--muted);line-height:1.95;margin-top:1.5rem;}
+    .phil-highlights{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:4rem;padding-top:4rem;border-top:1px solid var(--border-light);}
+    .ph-num{font-family:var(--serif);font-size:2.5rem;font-style:italic;color:var(--ember);line-height:1;}
+    .ph-label{font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-top:0.3rem;}
+    .phil-quote{font-family:var(--serif);font-size:1.6rem;font-style:italic;font-weight:300;color:var(--text);line-height:1.4;margin-bottom:2rem;}
+    .phil-attr{font-size:0.62rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--subtle);}
+    #menu{background:var(--charcoal);padding:10rem 5rem;}
+    .menu-header{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:end;margin-bottom:6rem;}
+    .menu-title{font-family:var(--serif);font-size:clamp(3rem,6vw,5.5rem);font-weight:300;font-style:italic;color:var(--parchment);line-height:1.0;}
+    .menu-eyebrow{font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:var(--ember-light);margin-bottom:1.5rem;}
+    .menu-sub{font-size:0.85rem;color:rgba(245,240,232,0.35);line-height:1.85;align-self:flex-end;}
+    .menu-tabs{display:flex;gap:0;margin-bottom:4rem;border-bottom:1px solid rgba(245,240,232,0.08);}
+    .mtab{font-size:0.62rem;font-weight:400;letter-spacing:0.28em;text-transform:uppercase;color:rgba(245,240,232,0.3);background:none;border:none;padding:1rem 2rem;cursor:pointer;transition:all 0.3s;border-bottom:1px solid transparent;margin-bottom:-1px;}
+    .mtab.active,.mtab:hover{color:var(--parchment);border-color:var(--ember);}
+    .menu-panel{display:none;}
+    .menu-panel.active{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+    .mitem{padding:2rem 2.5rem;border-bottom:1px solid rgba(245,240,232,0.05);border-right:1px solid rgba(245,240,232,0.05);display:flex;justify-content:space-between;align-items:flex-start;gap:2rem;transition:background 0.3s;}
+    .mitem:hover{background:rgba(245,240,232,0.03);}
+    .mitem:nth-child(even){border-right:none;}
+    .mitem-name{font-family:var(--serif);font-size:1.15rem;font-style:italic;color:var(--parchment);margin-bottom:0.4rem;}
+    .mitem-desc{font-size:0.75rem;color:rgba(245,240,232,0.3);line-height:1.6;}
+    .mitem-price{font-family:var(--serif);font-size:1rem;color:var(--ember-light);white-space:nowrap;font-style:italic;}
+    #gallery{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:400px 300px;padding:0;}
+    .gi{overflow:hidden;position:relative;}
+    .gi:first-child{grid-column:span 2;}
+    .gi img{width:100%;height:100%;object-fit:cover;transition:transform 0.8s ease;filter:brightness(0.88);}
+    .gi:hover img{transform:scale(1.04);filter:brightness(1);}
+    .gi-caption{position:absolute;bottom:1.5rem;left:1.5rem;font-family:var(--serif);font-size:0.88rem;font-style:italic;color:rgba(255,255,255,0.65);}
+    #reserve{display:grid;grid-template-columns:1fr 1fr;gap:8rem;align-items:start;}
+    .res-body{font-size:0.85rem;color:var(--muted);line-height:1.9;margin-bottom:3rem;}
+    .res-details{display:flex;flex-direction:column;gap:1.5rem;}
+    .rd-label{font-size:0.58rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--subtle);margin-bottom:0.3rem;}
+    .rd-val{font-size:0.88rem;color:var(--text);}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+    .fg{display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1rem;}
+    .fl{font-size:0.58rem;font-weight:400;letter-spacing:0.28em;text-transform:uppercase;color:var(--subtle);}
+    .fi,.fs,.ft{background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--sans);font-size:0.88rem;font-weight:300;padding:0.8rem 0;outline:none;transition:border-color 0.3s;width:100%;}
+    .fi::placeholder{color:var(--subtle);}
+    .fi:focus,.fs:focus,.ft:focus{border-color:var(--ember);}
+    .fs option{background:var(--cream);}
+    .ft{resize:vertical;min-height:80px;}
+    .fsub{font-family:var(--sans);font-size:0.65rem;font-weight:500;letter-spacing:0.28em;text-transform:uppercase;color:var(--cream);background:var(--charcoal);border:none;padding:1.1rem 3rem;cursor:pointer;transition:background 0.3s;margin-top:1rem;}
+    .fsub:hover{background:var(--ember);}
+    footer{background:var(--charcoal2);padding:4rem 5rem;}
+    .ft-top{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4rem;padding-bottom:4rem;margin-bottom:3rem;border-bottom:1px solid rgba(245,240,232,0.07);}
+    .ft-logo{font-family:var(--serif);font-size:1.5rem;font-style:italic;font-weight:300;color:var(--parchment);margin-bottom:1rem;}
+    .ft-tagline{font-size:0.75rem;color:rgba(245,240,232,0.25);line-height:1.7;}
+    .ft-col-title{font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(245,240,232,0.25);margin-bottom:1.2rem;}
+    .ft-col-item{font-size:0.8rem;color:rgba(245,240,232,0.4);margin-bottom:0.6rem;}
+    .ft-bottom{display:flex;justify-content:space-between;}
+    .ft-copy,.ft-credit{font-size:0.65rem;color:rgba(245,240,232,0.18);}
+    .ft-credit a{color:var(--ember-light);text-decoration:none;}
+    .afk-tier-bar{position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--charcoal);border-top:2px solid var(--ember);padding:0.75rem 2rem;display:flex;align-items:center;justify-content:space-between;font-family:var(--sans);}
+    .afk-tier-left{display:flex;align-items:center;gap:0.5rem;}
+    .afk-tier-label{font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(245,240,232,0.25);}
+    .afk-tier-name{font-size:0.82rem;font-weight:300;color:var(--parchment);margin-left:0.3rem;}
+    .afk-tier-sep{width:1px;height:20px;background:rgba(255,255,255,0.1);margin:0 0.8rem;}
+    .afk-tier-price{font-size:0.75rem;font-weight:400;color:var(--ember-light);letter-spacing:0.1em;text-transform:uppercase;}
+    .afk-tier-cta{font-size:0.65rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:var(--charcoal);background:var(--ember);padding:0.5rem 1.2rem;text-decoration:none;}
+    .afk-tier-cta:hover{background:var(--ember2);}
+    .reveal{opacity:0;transform:translateY(24px);transition:opacity 0.9s ease,transform 0.9s ease;}
+    .reveal.visible{opacity:1;transform:none;}
+    .d1{transition-delay:0.15s;}.d2{transition-delay:0.3s;}
+    @media(max-width:960px){
+      nav,footer{padding-left:1.5rem!important;padding-right:1.5rem!important;}
+      nav.scrolled{padding-left:1.5rem!important;padding-right:1.5rem!important;}
+      .nav-links{display:none;}
+      #home{grid-template-columns:1fr;height:auto;}
+      .hero-img-side{height:55vh;}
+      .hero-text-side{padding:4rem 1.5rem 8rem;}
+      .hero-bottom{left:1.5rem;right:1.5rem;}
+      section{padding:6rem 1.5rem;}
+      #philosophy{grid-template-columns:1fr;gap:3rem;}
+      .phil-divider{display:none;}
+      #menu{padding:6rem 1.5rem;}
+      .menu-header{grid-template-columns:1fr;}
+      .menu-panel.active{grid-template-columns:1fr;}
+      #gallery{grid-template-columns:1fr 1fr;grid-template-rows:auto;}
+      .gi:first-child{grid-column:span 2;}
+      #reserve{grid-template-columns:1fr;gap:4rem;}
+      .ft-top{grid-template-columns:1fr;gap:2rem;}
+      .ft-bottom{flex-direction:column;gap:1rem;text-align:center;}
+      .form-row{grid-template-columns:1fr;}
     }
   </style>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-<style>
-  .afk-tier-bar{position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#1a1714;border-top:2px solid #e8622a;padding:0.75rem 2rem;display:flex;align-items:center;justify-content:space-between;font-family:"DM Sans",sans-serif;}
-  .afk-tier-label{font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;color:#6e6860;}
-  .afk-tier-name{font-size:0.82rem;font-weight:500;color:#f5efe6;margin-left:0.6rem;}
-  .afk-tier-price{font-size:0.75rem;font-weight:500;color:#e8622a;letter-spacing:0.1em;text-transform:uppercase;}
-  .afk-tier-cta{font-size:0.68rem;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:#1a1714;background:#e8622a;padding:0.5rem 1.2rem;text-decoration:none;}
-  .afk-tier-cta:hover{background:#f07840;}
-  .afk-tier-left{display:flex;align-items:center;gap:0.5rem;}
-  .afk-tier-sep{width:1px;height:20px;background:rgba(255,255,255,0.1);}
-  @media(max-width:600px){.afk-tier-sep,.afk-tier-price{display:none;}}
-</style>
 </head>
 <body>
 
 <nav id="navbar">
-  <a href="#home" class="nav-logo">Ember <span>& Salt</span></a>
+  <a href="#home" class="nav-logo">Ember & Salt</a>
   <ul class="nav-links">
-    <li><a href="#about">Our Story</a></li>
+    <li><a href="#philosophy">Our Story</a></li>
     <li><a href="#menu">Menu</a></li>
     <li><a href="#gallery">Gallery</a></li>
-    <li><a href="#contact">Contact</a></li>
+    <li><a href="#reserve">Reserve</a></li>
   </ul>
-  <a href="#contact" class="nav-cta">Reserve a Table</a>
+  <a href="#reserve" class="nav-reserve">Reserve a Table</a>
 </nav>
 
 <section id="home">
-  <div class="hero-bg"></div>
-  <div class="hero-content">
-    <p class="hero-eyebrow">Est. 2019 · St. John's, Antigua</p>
-    <h1 class="hero-title">Bold Flavors.<br><em>Island Soul.</em></h1>
-    <p class="hero-sub">A modern Caribbean grill where fire-kissed seafood meets the rhythm of the sea. Dine with the horizon as your backdrop.</p>
-    <div class="hero-btns">
-      <a href="#menu" class="btn-primary">Explore Menu</a>
-      <a href="#contact" class="btn-outline">Book a Table</a>
+  <div class="hero-img-side">
+    <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=1200&auto=format&fit=crop&q=90" alt="Ember and Salt"/>
+    <div class="hero-img-overlay"></div>
+  </div>
+  <div class="hero-text-side">
+    <div class="hero-issue">St. John's, Antigua · Est. 2019</div>
+    <h1 class="hero-title"><strong>Ember</strong>& Salt</h1>
+    <div class="hero-rule"></div>
+    <p class="hero-sub">A modern Caribbean grill where fire-kissed seafood meets the unhurried rhythm of island life. Dine with the horizon as your backdrop.</p>
+    <div class="hero-actions">
+      <a href="#reserve" class="btn-ember">Reserve a Table</a>
+      <a href="#menu" class="btn-text-light">Explore the Menu</a>
+    </div>
+    <div class="hero-bottom">
+      <div><div class="hb-num">6+</div><div class="hb-label">Years Open</div></div>
+      <div><div class="hb-num">40+</div><div class="hb-label">Menu Items</div></div>
+      <div><div class="hb-num">4.9★</div><div class="hb-label">Guest Rating</div></div>
     </div>
   </div>
-  <div class="hero-scroll">Scroll</div>
 </section>
 
-<div class="features">
-  <div class="feature reveal">
-    <div class="feature-icon">🔥</div>
-    <div class="feature-title">Open Flame Grill</div>
-    <p class="feature-text">Every dish passes through our live wood-fire grill, locking in smoky island flavors you won't find elsewhere.</p>
-  </div>
-  <div class="feature reveal">
-    <div class="feature-icon">🐟</div>
-    <div class="feature-title">Daily Fresh Catch</div>
-    <p class="feature-text">Our fishermen deliver each morning. The menu changes with the sea — always honest, always fresh.</p>
-  </div>
-  <div class="feature reveal">
-    <div class="feature-icon">🌊</div>
-    <div class="feature-title">Waterfront Terrace</div>
-    <p class="feature-text">Dine under the stars on our open-air terrace with sweeping views of the Caribbean Sea and live music on weekends.</p>
-  </div>
-</div>
-
-<section id="about">
-  <div class="about-img reveal">
-    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&auto=format&fit=crop" alt="Restaurant interior" />
-  </div>
-  <div class="about-content reveal">
-    <p class="section-label">Our Story</p>
-    <h2 class="section-title">Born From the<br><em>Fire & the Sea</em></h2>
-    <div class="divider"></div>
-    <p class="section-body">Ember & Salt was born from a simple belief — that Caribbean cuisine deserves the same reverence as any fine dining tradition. Chef Marcus James returned from training in Barbados and London with one goal: bring world-class technique home to Antigua.</p>
-    <br>
-    <p class="section-body">Every recipe honors the island — scotch bonnet heat, fresh coconut, slow-braised meats, and the ocean's daily gift. We are not fusion. We are Caribbean, elevated.</p>
-    <div class="about-stats">
-      <div><div class="stat-num">6+</div><div class="stat-label">Years serving Antigua</div></div>
-      <div><div class="stat-num">100%</div><div class="stat-label">Locally sourced fish</div></div>
-      <div><div class="stat-num">40+</div><div class="stat-label">Menu items</div></div>
-      <div><div class="stat-num">★ 4.9</div><div class="stat-label">Average guest rating</div></div>
+<section id="philosophy">
+  <div class="reveal">
+    <div class="eyebrow">Our Philosophy</div>
+    <h2 class="sec-title">Caribbean cuisine deserves the same reverence as any fine dining tradition.</h2>
+    <div class="rule"></div>
+    <p class="phil-body">Chef Marcus James returned from training in Barbados and London with one goal: bring world-class technique home to Antigua. Every recipe honors the island — scotch bonnet heat, fresh coconut, slow-braised meats, and the ocean's daily gift.</p>
+    <div class="phil-highlights">
+      <div><div class="ph-num">100%</div><div class="ph-label">Locally sourced fish</div></div>
+      <div><div class="ph-num">Daily</div><div class="ph-label">Fresh catch delivered</div></div>
+      <div><div class="ph-num">Open</div><div class="ph-label">Tue – Sun</div></div>
+      <div><div class="ph-num">4.9★</div><div class="ph-label">TripAdvisor rated</div></div>
     </div>
+  </div>
+  <div class="phil-divider"></div>
+  <div class="reveal d1" style="display:flex;flex-direction:column;justify-content:flex-end;">
+    <blockquote class="phil-quote">"We are not fusion. We are Caribbean, elevated."</blockquote>
+    <div class="phil-attr">— Chef Marcus James, Ember & Salt</div>
   </div>
 </section>
 
 <section id="menu">
   <div class="menu-header reveal">
-    <p class="section-label">What We Serve</p>
-    <h2 class="section-title">The Menu</h2>
-    <div class="divider" style="margin: 1.5rem auto;"></div>
-    <p class="section-body">Crafted daily around what the sea and land provide.</p>
+    <div><div class="menu-eyebrow">What We Serve</div><div class="menu-title">The Menu</div></div>
+    <p class="menu-sub">Crafted daily around what the sea and land provide. Menu changes seasonally.</p>
   </div>
   <div class="menu-tabs">
-    <button class="tab-btn active" onclick="showTab('starters', this)">Starters</button>
-    <button class="tab-btn" onclick="showTab('mains', this)">Mains</button>
-    <button class="tab-btn" onclick="showTab('drinks', this)">Drinks</button>
-    <button class="tab-btn" onclick="showTab('desserts', this)">Desserts</button>
+    <button class="mtab active" onclick="showTab('starters',this)">Starters</button>
+    <button class="mtab" onclick="showTab('mains',this)">Mains</button>
+    <button class="mtab" onclick="showTab('drinks',this)">Drinks</button>
+    <button class="mtab" onclick="showTab('desserts',this)">Desserts</button>
   </div>
   <div id="starters" class="menu-panel active reveal">
-    <div class="menu-grid">
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Scotch Bonnet Conch Fritters</div><div class="menu-item-desc">Crispy island conch, fiery dip, shaved cucumber slaw</div></div><div class="menu-item-price">$14</div></div>
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Smoked Mahi Ceviche</div><div class="menu-item-desc">Citrus-cured mahi mahi, mango salsa, coconut leche de tigre</div></div><div class="menu-item-price">$16</div></div>
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Jerk Chicken Skewers</div><div class="menu-item-desc">Grilled over pimento wood, pineapple glaze, grilled flatbread</div></div><div class="menu-item-price">$15</div></div>
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Plantain & Crab Stack</div><div class="menu-item-desc">Sweet plantain rounds, seasoned blue crab, herb oil</div></div><div class="menu-item-price">$17</div></div>
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Callaloo Soup</div><div class="menu-item-desc">Creamy callaloo, coconut milk, smoked ham, toasted coconut</div></div><div class="menu-item-price">$11</div></div>
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Salt Fish Cakes</div><div class="menu-item-desc">Traditional Antiguan preparation, pepper sauce, lime cream</div></div><div class="menu-item-price">$12</div></div>
-    </div>
+    <div class="mitem"><div><div class="mitem-name">Scotch Bonnet Conch Fritters</div><div class="mitem-desc">Crispy island conch, fiery dip, shaved cucumber slaw</div></div><div class="mitem-price">$14</div></div>
+    <div class="mitem"><div><div class="mitem-name">Smoked Mahi Ceviche</div><div class="mitem-desc">Citrus-cured mahi mahi, mango salsa, coconut leche de tigre</div></div><div class="mitem-price">$16</div></div>
+    <div class="mitem"><div><div class="mitem-name">Jerk Chicken Skewers</div><div class="mitem-desc">Grilled over pimento wood, pineapple glaze, grilled flatbread</div></div><div class="mitem-price">$15</div></div>
+    <div class="mitem"><div><div class="mitem-name">Plantain & Crab Stack</div><div class="mitem-desc">Sweet plantain rounds, seasoned blue crab, herb oil</div></div><div class="mitem-price">$17</div></div>
+    <div class="mitem"><div><div class="mitem-name">Callaloo Soup</div><div class="mitem-desc">Creamy callaloo, coconut milk, smoked ham, toasted coconut</div></div><div class="mitem-price">$11</div></div>
+    <div class="mitem"><div><div class="mitem-name">Salt Fish Cakes</div><div class="mitem-desc">Traditional Antiguan preparation, pepper sauce, lime cream</div></div><div class="mitem-price">$12</div></div>
   </div>
   <div id="mains" class="menu-panel reveal">
-    <div class="menu-grid">
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Ember-Grilled Red Snapper</div><div class="menu-item-desc">Whole snapper, jerk butter, festival bread, garden salad</div></div><div class="menu-item-price">$38</div></div>
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Caribbean Lobster Thermidor</div><div class="menu-item-desc">Split Caribbean lobster, cognac cream, gruyère crust, rice</div></div><div class="menu-item-price">$55</div></div>
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Braised Oxtail</div><div class="menu-item-desc">Slow-braised 8 hours, butter beans, rice & peas, fried plantain</div></div><div class="menu-item-price">$34</div></div>
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Coconut Curry Shrimp</div><div class="menu-item-desc">Tiger shrimp, aromatic curry, jasmine rice, roti</div></div><div class="menu-item-price">$32</div></div>
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Grilled Mahi Mahi</div><div class="menu-item-desc">Fire-grilled fillet, mango salsa, sweet potato mash, greens</div></div><div class="menu-item-price">$36</div></div>
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Vegetarian Roti Bowl</div><div class="menu-item-desc">Chickpea curry, roasted veg, coconut chutney, soft roti</div></div><div class="menu-item-price">$24</div></div>
-    </div>
+    <div class="mitem"><div><div class="mitem-name">Ember-Grilled Red Snapper</div><div class="mitem-desc">Whole snapper, jerk butter, festival bread, garden salad</div></div><div class="mitem-price">$38</div></div>
+    <div class="mitem"><div><div class="mitem-name">Caribbean Lobster Thermidor</div><div class="mitem-desc">Split Caribbean lobster, cognac cream, gruyère crust, rice</div></div><div class="mitem-price">$55</div></div>
+    <div class="mitem"><div><div class="mitem-name">Braised Oxtail</div><div class="mitem-desc">Slow-braised 8 hours, butter beans, rice & peas, fried plantain</div></div><div class="mitem-price">$34</div></div>
+    <div class="mitem"><div><div class="mitem-name">Coconut Curry Shrimp</div><div class="mitem-desc">Tiger shrimp, aromatic curry, jasmine rice, roti</div></div><div class="mitem-price">$32</div></div>
+    <div class="mitem"><div><div class="mitem-name">Grilled Mahi Mahi</div><div class="mitem-desc">Fire-grilled fillet, mango salsa, sweet potato mash, greens</div></div><div class="mitem-price">$36</div></div>
+    <div class="mitem"><div><div class="mitem-name">Vegetarian Roti Bowl</div><div class="mitem-desc">Chickpea curry, roasted veg, coconut chutney, soft roti</div></div><div class="mitem-price">$24</div></div>
   </div>
   <div id="drinks" class="menu-panel reveal">
-    <div class="menu-grid">
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Antiguan Sunset</div><div class="menu-item-desc">English Harbour rum, passionfruit, lime, ginger beer</div></div><div class="menu-item-price">$14</div></div>
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Sea Glass Cooler</div><div class="menu-item-desc">Coconut water, cucumber, mint, white rum, sea salt rim</div></div><div class="menu-item-price">$13</div></div>
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Mango Habanero Margarita</div><div class="menu-item-desc">Tequila, fresh mango, habanero syrup, lime salt rim</div></div><div class="menu-item-price">$15</div></div>
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Fresh Sorrel Punch</div><div class="menu-item-desc">Hibiscus, ginger, clove, cinnamon — served over hand-chipped ice</div></div><div class="menu-item-price">$8</div></div>
-    </div>
+    <div class="mitem"><div><div class="mitem-name">Antiguan Sunset</div><div class="mitem-desc">English Harbour rum, passionfruit, lime, ginger beer</div></div><div class="mitem-price">$14</div></div>
+    <div class="mitem"><div><div class="mitem-name">Sea Glass Cooler</div><div class="mitem-desc">Coconut water, cucumber, mint, white rum, sea salt rim</div></div><div class="mitem-price">$13</div></div>
+    <div class="mitem"><div><div class="mitem-name">Mango Habanero Margarita</div><div class="mitem-desc">Tequila, fresh mango, habanero syrup, lime salt rim</div></div><div class="mitem-price">$15</div></div>
+    <div class="mitem"><div><div class="mitem-name">Fresh Sorrel Punch</div><div class="mitem-desc">Hibiscus, ginger, clove, cinnamon — served over hand-chipped ice</div></div><div class="mitem-price">$8</div></div>
   </div>
   <div id="desserts" class="menu-panel reveal">
-    <div class="menu-grid">
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Rum Cake Brûlée</div><div class="menu-item-desc">Antiguan black cake, vanilla custard, torched sugar crust</div></div><div class="menu-item-price">$12</div></div>
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Coconut Panna Cotta</div><div class="menu-item-desc">Set coconut cream, passionfruit coulis, toasted coconut flakes</div></div><div class="menu-item-price">$11</div></div>
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Grilled Pineapple</div><div class="menu-item-desc">Brown sugar glazed, rum raisin ice cream, lime zest</div></div><div class="menu-item-price">$10</div></div>
-      <div class="menu-item"><div class="menu-item-info"><div class="menu-item-name">Dark Chocolate Tart</div><div class="menu-item-desc">72% cacao, scotch bonnet caramel, sea salt, vanilla cream</div></div><div class="menu-item-price">$13</div></div>
-    </div>
+    <div class="mitem"><div><div class="mitem-name">Rum Cake Brûlée</div><div class="mitem-desc">Antiguan black cake, vanilla custard, torched sugar crust</div></div><div class="mitem-price">$12</div></div>
+    <div class="mitem"><div><div class="mitem-name">Coconut Panna Cotta</div><div class="mitem-desc">Set coconut cream, passionfruit coulis, toasted coconut flakes</div></div><div class="mitem-price">$11</div></div>
+    <div class="mitem"><div><div class="mitem-name">Grilled Pineapple</div><div class="mitem-desc">Brown sugar glazed, rum raisin ice cream, lime zest</div></div><div class="mitem-price">$10</div></div>
+    <div class="mitem"><div><div class="mitem-name">Dark Chocolate Tart</div><div class="mitem-desc">72% cacao, scotch bonnet caramel, sea salt, vanilla cream</div></div><div class="mitem-price">$13</div></div>
   </div>
 </section>
 
-<section id="gallery">
-  <div class="gallery-header reveal">
-    <p class="section-label">Visual Feast</p>
-    <h2 class="section-title">The <em>Experience</em></h2>
-  </div>
-  <div class="gallery-grid reveal">
-    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&auto=format&fit=crop" alt="Food"/><div class="gallery-overlay"></div></div>
-    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop" alt="Dish"/><div class="gallery-overlay"></div></div>
-    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop" alt="Grill"/><div class="gallery-overlay"></div></div>
-    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop" alt="Restaurant"/><div class="gallery-overlay"></div></div>
-    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=800&auto=format&fit=crop" alt="Plating"/><div class="gallery-overlay"></div></div>
-  </div>
+<section id="gallery" style="padding:0;">
+  <div class="gi"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&auto=format&fit=crop" alt="Restaurant"/><div class="gi-caption">The dining room at sunset</div></div>
+  <div class="gi"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&auto=format&fit=crop" alt="Food"/><div class="gi-caption">Ember-grilled snapper</div></div>
+  <div class="gi"><img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop" alt="Dish"/><div class="gi-caption">Daily fresh catch</div></div>
+  <div class="gi"><img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop" alt="Ambiance"/><div class="gi-caption">Waterfront terrace</div></div>
+  <div class="gi"><img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600&auto=format&fit=crop" alt="Plating"/><div class="gi-caption">Handcrafted plating</div></div>
 </section>
 
-<section id="testimonials">
-  <p class="section-label reveal">Guest Words</p>
-  <h2 class="section-title reveal">What People <em>Say</em></h2>
-  <div class="testimonials-grid">
-    <div class="testimonial reveal"><div class="stars">★★★★★</div><p class="testimonial-text">The snapper alone was worth the flight. Nothing we've eaten in the Caribbean has come close to the depth of flavor here. We're already planning a return trip.</p><div class="testimonial-author">— James & Rachel T., London</div></div>
-    <div class="testimonial reveal"><div class="stars">★★★★★</div><p class="testimonial-text">Watching the sun dip below the horizon while eating jerk lobster and sipping an Antiguan Sunset cocktail — that's a memory we'll carry forever.</p><div class="testimonial-author">— Marcelline D., Martinique</div></div>
-    <div class="testimonial reveal"><div class="stars">★★★★★</div><p class="testimonial-text">Chef Marcus came out to greet our table personally. The callaloo soup tasted like my grandmother's recipe — but elevated. Authentic and refined at the same time.</p><div class="testimonial-author">— Deon W., Barbados</div></div>
-  </div>
-</section>
-
-<section id="contact">
-  <div class="contact-info reveal">
-    <p class="section-label">Find Us</p>
-    <h2 class="section-title">Reserve Your<br><em>Evening</em></h2>
-    <div class="divider"></div>
-    <div class="contact-details">
-      <div><div class="contact-detail-label">Address</div><div class="contact-detail-val">12 Harbour Drive, St. John's<br>Antigua and Barbuda</div></div>
-      <div><div class="contact-detail-label">Hours</div><div class="contact-detail-val">Tuesday – Sunday<br>12:00 PM – 10:30 PM</div></div>
-      <div><div class="contact-detail-label">Phone</div><div class="contact-detail-val">+1 (268) 555-0192</div></div>
-      <div><div class="contact-detail-label">Email</div><div class="contact-detail-val">hello@emberandsalt.com</div></div>
-    </div>
-  </div>
+<section id="reserve">
   <div class="reveal">
-    <p class="section-label">Make a Reservation</p>
-    <h3 class="section-title" style="font-size:2rem;">Book a Table</h3>
-    <div class="divider"></div>
-    <div class="contact-form">
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">First Name</label><input type="text" class="form-input" placeholder="Marcus"/></div>
-        <div class="form-group"><label class="form-label">Last Name</label><input type="text" class="form-input" placeholder="James"/></div>
-      </div>
-      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" placeholder="you@example.com"/></div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input"/></div>
-        <div class="form-group"><label class="form-label">Time</label><select class="form-select"><option>12:00 PM</option><option>1:00 PM</option><option>6:00 PM</option><option>7:00 PM</option><option>8:00 PM</option><option>9:00 PM</option></select></div>
-      </div>
-      <div class="form-group"><label class="form-label">Party Size</label><select class="form-select"><option>1 Guest</option><option>2 Guests</option><option>3–4 Guests</option><option>5–6 Guests</option><option>7+ Guests</option></select></div>
-      <div class="form-group"><label class="form-label">Special Requests</label><textarea class="form-textarea" placeholder="Dietary requirements, occasion, preferred seating…"></textarea></div>
-      <button class="form-submit">Request Reservation</button>
+    <div class="eyebrow">Reservations</div>
+    <h2 class="sec-title">Join us for an evening you won't forget.</h2>
+    <div class="rule"></div>
+    <p class="res-body">We recommend reserving ahead, especially for weekends and waterfront seating. Walk-ins welcome based on availability.</p>
+    <div class="res-details">
+      <div><div class="rd-label">Address</div><div class="rd-val">12 Harbour Drive, St. John's<br>Antigua and Barbuda</div></div>
+      <div><div class="rd-label">Hours</div><div class="rd-val">Tuesday – Sunday · 12:00 PM – 10:30 PM</div></div>
+      <div><div class="rd-label">Phone</div><div class="rd-val">+1 (268) 555-0192</div></div>
+      <div><div class="rd-label">Email</div><div class="rd-val">hello@emberandsalt.com</div></div>
     </div>
+  </div>
+  <div class="reveal d1">
+    <div class="form-row"><div class="fg"><label class="fl">First Name</label><input type="text" class="fi" placeholder="Marcus"/></div><div class="fg"><label class="fl">Last Name</label><input type="text" class="fi" placeholder="James"/></div></div>
+    <div class="fg"><label class="fl">Email Address</label><input type="email" class="fi" placeholder="you@example.com"/></div>
+    <div class="form-row"><div class="fg"><label class="fl">Date</label><input type="date" class="fi"/></div><div class="fg"><label class="fl">Time</label><select class="fs"><option>12:00 PM</option><option>6:00 PM</option><option>7:00 PM</option><option>8:00 PM</option><option>9:00 PM</option></select></div></div>
+    <div class="form-row"><div class="fg"><label class="fl">Party Size</label><select class="fs"><option>1 Guest</option><option>2 Guests</option><option>3–4 Guests</option><option>5–6 Guests</option><option>7+ Guests</option></select></div><div class="fg"><label class="fl">Seating</label><select class="fs"><option>No preference</option><option>Waterfront Terrace</option><option>Indoor Dining</option><option>Private Corner</option></select></div></div>
+    <div class="fg"><label class="fl">Special Requests</label><textarea class="ft" placeholder="Dietary requirements, celebrations, allergies…"></textarea></div>
+    <button class="fsub">Request Reservation</button>
   </div>
 </section>
 
 <footer>
-  <div class="footer-logo">Ember <span>& Salt</span></div>
-  <div class="footer-center">
-    © 2025 Ember & Salt Caribbean Grill · St. John's, Antigua<br>
-    <span style="font-size:0.7rem; color: #55504a;">Designed by <strong style="color: var(--amber);">Your Name Here</strong></span>
+  <div class="ft-top">
+    <div><div class="ft-logo">Ember & Salt</div><p class="ft-tagline">A modern Caribbean grill on the waterfront of St. John's, Antigua. Open Tuesday through Sunday.</p></div>
+    <div><div class="ft-col-title">Visit Us</div><div class="ft-col-item">12 Harbour Drive, St. John's</div><div class="ft-col-item">Antigua and Barbuda</div><div class="ft-col-item">Tue–Sun · 12PM – 10:30PM</div></div>
+    <div><div class="ft-col-title">Contact</div><div class="ft-col-item">+1 (268) 555-0192</div><div class="ft-col-item">hello@emberandsalt.com</div><div class="ft-col-item">Instagram · TripAdvisor</div></div>
   </div>
-  <div class="footer-socials">
-    <a href="#">Instagram</a>
-    <a href="#">Facebook</a>
-    <a href="#">TripAdvisor</a>
+  <div class="ft-bottom">
+    <div class="ft-copy">© 2025 Ember & Salt Caribbean Grill. All rights reserved.</div>
+    <div class="ft-credit">Website by <a href="https://afkco.netlify.app" target="_blank">AFK Co.</a></div>
   </div>
 </footer>
 
-<script>
-  const navbar = document.getElementById('navbar');
-  window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 60);
-  });
-  function showTab(tabId, btn) {
-    document.querySelectorAll('.menu-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
-    btn.classList.add('active');
-  }
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
-    });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-</script>
 <div class="afk-tier-bar">
   <div class="afk-tier-left">
     <span class="afk-tier-label">AFK Co. Demo —</span>
@@ -370,5 +288,20 @@
   </div>
   <a href="https://afkco.netlify.app/#contact" target="_blank" class="afk-tier-cta">Get This Package →</a>
 </div>
+
+<script>
+  const nav=document.getElementById('navbar');
+  window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>80));
+  function showTab(id,btn){
+    document.querySelectorAll('.menu-panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.mtab').forEach(b=>b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+  },{threshold:0.08});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
 </body>
 </html>
